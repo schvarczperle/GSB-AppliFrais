@@ -106,6 +106,25 @@ class PdoGsb
         $lesVisiteurs = $requetePrepare->fetchAll();
         return $lesVisiteurs;
     }
+     /**
+    * Fonction qui retourne la liste des visiteurs dont la fiche est validée
+    *
+    * @param PDO $pdo instance de la classe PDO utilisée pour se connecter
+    *
+    * @return Array de visiteurs
+    */
+    function getLesVisiteursVA()
+    {
+        $requetePrepare = PdoGsb::$monPdo->prepare(
+                'SELECT DISTINCT * '
+               .'FROM visiteur JOIN fichefrais ON (visiteur.id = fichefrais.idvisiteur) '
+               .'WHERE idetat = "VA"'
+               .'ORDER BY nom'
+        );
+        $requetePrepare->execute();
+        $lesVisiteurs = $requetePrepare->fetchAll();
+        return $lesVisiteurs;
+    }
 
     /**
      * Retourne les informations d'un comptable
@@ -271,7 +290,7 @@ class PdoGsb
      */
     public function majNbJustificatifs($idVisiteur, $mois, $nbJustificatifs)
     {
-        $requetePrepare = PdoGB::$monPdo->prepare(
+        $requetePrepare = PdoGsB::$monPdo->prepare(
             'UPDATE fichefrais '
             . 'SET nbjustificatifs = :unNbJustificatifs '
             . 'WHERE fichefrais.idvisiteur = :unIdVisiteur '
@@ -428,6 +447,31 @@ class PdoGsb
         $requetePrepare->bindParam(':unIdFrais', $idFrais, PDO::PARAM_STR);
         $requetePrepare->execute();
     }
+    
+    /**
+     * Modifie le libelle d'un frais hors forfait pour un visiteur un mois donné
+     * à partir des informations fournies en paramètre
+     *
+     * @param String $idVisiteur ID du visiteur
+     * @param String $mois       Mois sous la forme aaaamm
+     * @param String $libelle    Libellé du frais
+     * @param String $date       Date du frais au format français jj//mm/aaaa
+     * @param Float  $montant    Montant du frais
+     *
+     * @return null
+     */
+    public function majFraisHorsForfait($id, $libelle) 
+        {
+        $requetePrepare = PdoGSB::$monPdo->prepare(
+            'UPDATE lignefraishorsforfait '
+            . 'SET libelle = :unLibelle '
+            . 'WHERE id = :unId'
+        );
+        $requetePrepare->bindParam(':unId', $id, PDO::PARAM_STR);
+        $requetePrepare->bindParam(':unLibelle', $libelle, PDO::PARAM_STR);
+        $requetePrepare->execute();
+    }
+    
 
     /**
      * Retourne les mois pour lesquel un visiteur a une fiche de frais
@@ -551,6 +595,32 @@ class PdoGsb
             );
         $requetePrepare->bindParam(':moisPrecedent', $moisPrecedent, PDO::PARAM_STR);
         $requetePrepare->execute();
+    }
+    /**
+     * fonction qui recupere les mois dont la fiche a été validée
+     * 
+     * @return array nous retourne les mois sous forme de tableau
+     */
+    public function getLesMoisVA(){
+        $requetePrepare = PdoGsb::$monPdo->prepare(
+                'SELECT mois '
+               .'FROM fichefrais '
+               .'WHERE idetat = "VA"'
+               .'ORDER BY fichefrais.mois desc'
+        );
+        $requetePrepare->execute();
+        $lesMois = array();
+        while ($laLigne = $requetePrepare->fetch()) {
+            $mois = $laLigne['mois'];
+            $numAnnee = substr($mois, 0, 4);
+            $numMois = substr($mois, 4, 2);
+            $lesMois[] = array(
+                'mois' => $mois,
+                'numAnnee' => $numAnnee,
+                'numMois' => $numMois
+            );
+        }
+        return $lesMois;
     }
 }
 

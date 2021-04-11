@@ -25,10 +25,10 @@
                            class="btn btn-success btn-lg" role="button">
                             <span class="glyphicon glyphicon-pencil"></span>
                             <br>Valider les fiches de frais</a>
-                        <a href="index.php?uc=validerFrais"
+                        <a href="index.php?uc=suiviPaiement&action=choixVM"
                            class="btn btn-primary btn-lg" role="button">
                             <span class="glyphicon glyphicon-list-alt"></span>
-                            <br>Afficher mes fiches de frais</a>
+                            <br>Suivre le paiement des fiches de frais</a>
                     </div>
                 </div>
             </div>

@@ -1,6 +1,7 @@
 <?php
 
 
+
 require_once 'includes/fct.inc.php';
 require_once 'includes/class.pdogsb.inc.php';
 session_start();
@@ -30,8 +31,13 @@ case 'etatFrais':
 case 'validerFrais':
     include 'controleurs/c_validerFrais.php';
     break;
+case 'suiviPaiement':
+    include 'controleurs/c_suiviPaiement.php';
+    break;
+
 case 'deconnexion':
     include 'controleurs/c_deconnexion.php';
     break;
+
 }
 require 'vues/v_pied.php';
